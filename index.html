@@ -9,51 +9,95 @@
 
   body {
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: #0a0a14;
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 30px 16px 50px;
+    padding: 30px 16px 60px;
     overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated background */
+  canvas#bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
   }
 
   .header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
   }
 
   .header h1 {
-    font-size: 26px;
+    font-size: 24px;
     color: #fff;
-    margin-bottom: 8px;
-    text-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(255, 80, 120, 0.6);
   }
 
   .header p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    letter-spacing: 1px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 1.5px;
   }
 
-  .progress {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 20px;
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 340px;
+    margin-bottom: 24px;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.35);
+    margin-bottom: 6px;
+    text-align: center;
     transition: all 0.3s;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff4f7b, #ff7eb3);
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(255, 79, 123, 0.5);
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    max-width: 360px;
+    gap: 14px;
+    max-width: 340px;
     width: 100%;
   }
 
   .card-container {
-    perspective: 800px;
-    height: 160px;
+    perspective: 1000px;
+    height: 170px;
   }
 
   .card {
@@ -61,13 +105,25 @@
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
 
   .card.flipped {
     transform: rotateY(180deg);
+  }
+
+  .card.shake {
+    animation: cardShake 0.4s ease;
+  }
+
+  @keyframes cardShake {
+    0%, 100% { transform: rotateZ(0); }
+    20% { transform: rotateZ(-3deg) scale(1.02); }
+    40% { transform: rotateZ(3deg) scale(1.04); }
+    60% { transform: rotateZ(-2deg) scale(1.02); }
+    80% { transform: rotateZ(1deg); }
   }
 
   .card-face {
@@ -84,57 +140,108 @@
     padding: 16px;
   }
 
+  /* Card fronts - dark, mysterious, seductive */
   .card-front {
-    background: linear-gradient(145deg, #e74c3c, #c0392b);
-    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.15);
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow:
+      0 2px 20px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+  }
+
+  .card-front::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0%,
+      rgba(255, 79, 123, 0.08) 25%,
+      transparent 50%
+    );
+    animation: shimmer 4s linear infinite;
+  }
+
+  @keyframes shimmer {
+    to { transform: rotate(360deg); }
   }
 
   .card-front .icon {
-    font-size: 36px;
-    margin-bottom: 8px;
-    animation: shake 2s ease-in-out infinite;
+    font-size: 32px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    filter: grayscale(0.2);
   }
 
   .card-front .label {
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    line-height: 1.5;
   }
 
-  @keyframes shake {
-    0%, 100% { transform: rotate(0deg); }
-    10%, 30% { transform: rotate(-5deg); }
-    20%, 40% { transform: rotate(5deg); }
-    50% { transform: rotate(0deg); }
+  .card-front .hint {
+    font-size: 11px;
+    color: rgba(255, 79, 123, 0.5);
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 1px;
   }
 
+  /* Card backs - warm, glowing */
   .card-back {
-    background: linear-gradient(145deg, #fff5f5, #ffe0e6);
+    background: linear-gradient(145deg, #fff8f0, #ffe8ee);
     transform: rotateY(180deg);
-    box-shadow: 0 4px 20px rgba(255, 107, 158, 0.3);
-    border: 2px solid rgba(255, 107, 158, 0.2);
+    box-shadow:
+      0 4px 30px rgba(255, 107, 158, 0.25),
+      0 0 60px rgba(255, 107, 158, 0.1);
+    border: 1px solid rgba(255, 180, 200, 0.3);
   }
 
   .card-back .sweet-icon {
-    font-size: 28px;
+    font-size: 26px;
     margin-bottom: 10px;
   }
 
   .card-back .sweet-text {
-    color: #c0392b;
-    font-size: 14px;
-    line-height: 1.6;
+    color: #8b3a5e;
+    font-size: 13.5px;
+    line-height: 1.7;
     text-align: center;
     font-weight: 500;
+  }
+
+  /* Sparkle burst on flip */
+  .sparkle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+    animation: sparkleFly 0.8s ease-out forwards;
+  }
+
+  @keyframes sparkleFly {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
   }
 
   /* Easter egg overlay */
   .easter-egg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(5, 5, 15, 0.92);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -142,8 +249,10 @@
     z-index: 100;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.8s ease;
+    transition: opacity 1s ease;
     padding: 30px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .easter-egg.show {
@@ -151,31 +260,38 @@
     pointer-events: auto;
   }
 
-  .easter-egg .final-text {
+  .easter-egg .line {
     color: #fff;
     font-size: 22px;
-    line-height: 1.8;
+    line-height: 2;
     text-align: center;
-    max-width: 300px;
     opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s ease 0.5s;
+    transform: translateY(15px);
+    transition: all 0.6s ease;
   }
 
-  .easter-egg.show .final-text {
+  .easter-egg .line.visible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  .easter-egg .sub-text {
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 13px;
-    margin-top: 24px;
-    opacity: 0;
-    transition: opacity 0.8s ease 1.5s;
+  .easter-egg .line.accent {
+    color: #ff7eb3;
+    font-size: 26px;
+    font-weight: 600;
+    text-shadow: 0 0 40px rgba(255, 126, 179, 0.5);
   }
 
-  .easter-egg.show .sub-text {
+  .easter-egg .sub-text {
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 12px;
+    margin-top: 40px;
+    letter-spacing: 3px;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+
+  .easter-egg .sub-text.visible {
     opacity: 1;
   }
 
@@ -183,128 +299,244 @@
   .heart {
     position: fixed;
     z-index: 99;
-    font-size: 20px;
     pointer-events: none;
-    animation: floatUp 4s ease-out forwards;
+    animation: floatUp var(--duration) ease-out forwards;
     opacity: 0;
   }
 
   @keyframes floatUp {
     0% {
+      opacity: 0;
+      transform: translateY(0) scale(0.3) rotate(0deg);
+    }
+    10% {
       opacity: 1;
-      transform: translateY(0) scale(0.5) rotate(0deg);
     }
     50% {
-      opacity: 1;
-      transform: translateY(-40vh) scale(1) rotate(15deg);
+      opacity: 0.8;
+      transform: translateY(-40vh) scale(1) rotate(var(--rot));
     }
     100% {
       opacity: 0;
-      transform: translateY(-80vh) scale(0.8) rotate(-10deg);
+      transform: translateY(-85vh) scale(0.6) rotate(calc(var(--rot) * -1));
     }
   }
 
-  /* Card entrance animation */
+  /* Card entrance */
   .card-container {
     opacity: 0;
-    transform: translateY(20px);
-    animation: cardIn 0.4s ease forwards;
+    transform: translateY(30px) scale(0.95);
+    animation: cardIn 0.5s ease forwards;
   }
-  .card-container:nth-child(1) { animation-delay: 0.1s; }
-  .card-container:nth-child(2) { animation-delay: 0.2s; }
-  .card-container:nth-child(3) { animation-delay: 0.3s; }
-  .card-container:nth-child(4) { animation-delay: 0.4s; }
-  .card-container:nth-child(5) { animation-delay: 0.5s; }
-  .card-container:nth-child(6) { animation-delay: 0.6s; }
+  .card-container:nth-child(1) { animation-delay: 0.15s; }
+  .card-container:nth-child(2) { animation-delay: 0.25s; }
+  .card-container:nth-child(3) { animation-delay: 0.35s; }
+  .card-container:nth-child(4) { animation-delay: 0.45s; }
+  .card-container:nth-child(5) { animation-delay: 0.55s; }
+  .card-container:nth-child(6) { animation-delay: 0.65s; }
 
   @keyframes cardIn {
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Subtle pulse on unflipped cards */
-  .card:not(.flipped) {
-    animation: pulse 3s ease-in-out infinite;
+  /* Glow pulse on unflipped cards */
+  .card:not(.flipped):not(.shake) .card-front {
+    animation: glowPulse 3s ease-in-out infinite;
   }
 
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05); }
+    50% { box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 25px rgba(255, 79, 123, 0.12); }
+  }
+
+  /* Locked card */
+  .card.locked .card-front::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 200, 100, 0.2);
+    pointer-events: none;
+  }
+
+  .lock-icon {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 14px;
+    z-index: 2;
+    opacity: 0.5;
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🎭 愚人节特别企划</h1>
-  <p>据说只有胆大的人才敢全部翻开</p>
+<canvas id="bg"></canvas>
+
+<div class="content">
+  <div class="header">
+    <h1>April 1st</h1>
+    <p>你确定你想知道真相吗？</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label" id="progressLabel">0 / 6</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
 </div>
 
-<div class="progress" id="progress">已翻开 0 / 6</div>
-
-<div class="grid" id="grid"></div>
-
 <div class="easter-egg" id="easterEgg">
-  <div class="final-text">
-    今天全世界都在说假话<br>
-    但这里每一句<br>
-    都是真的 ❤️
-  </div>
-  <div class="sub-text">— 你的专属愚人节 · 2026 —</div>
+  <div class="line" id="line1">今天全世界都在说假话</div>
+  <div class="line" id="line2">但你刚翻开的每一句</div>
+  <div class="line accent" id="line3">都是真的</div>
+  <div class="sub-text" id="subText">你的专属愚人节 · 2026</div>
 </div>
 
 <script>
+// --- Particle background ---
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let w, h;
+
+function resizeCanvas() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+class Particle {
+  constructor() {
+    this.reset();
+    this.y = Math.random() * h;
+  }
+  reset() {
+    this.x = Math.random() * w;
+    this.y = h + 10;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedY = -(Math.random() * 0.4 + 0.1);
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.4 + 0.1;
+    this.hue = Math.random() > 0.5 ? 340 : 280;
+  }
+  update() {
+    this.y += this.speedY;
+    this.x += this.speedX;
+    if (this.y < -10) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 80%, 70%, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+function animateBg() {
+  ctx.clearRect(0, 0, w, h);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateBg);
+}
+animateBg();
+
+// --- Cards ---
 const cards = [
   {
-    icon: '⚠️',
-    label: '高 能 预 警',
+    icon: '🔒',
+    label: '他手机里的秘密',
+    hint: '点击查看',
     sweetIcon: '☀️',
-    sweetText: '你笑起来的样子\n是我见过最好看的风景'
+    sweetText: '秘密就是\n每天早上醒来第一眼\n都想看看你'
   },
   {
-    icon: '🐛',
-    label: '有 虫 ！',
-    sweetIcon: '💌',
-    sweetText: '今日愚人节新闻：\n有人爱你这件事，不是假的'
-  },
-  {
-    icon: '👻',
-    label: '胆 小 勿 点',
+    icon: '📱',
+    label: '一条深夜消息',
+    hint: '未读',
     sweetIcon: '🌙',
-    sweetText: '全世界都可以骗你\n但我的心不会'
+    sweetText: '那些睡不着的夜里\n想说的全是同一句：\n还好有你在身边'
   },
   {
-    icon: '☠️',
-    label: '前 方 危 险',
-    sweetIcon: '🎁',
-    sweetText: '遇见你之后\n每一天都像中了奖'
+    icon: '🗑️',
+    label: '最近删除的照片',
+    hint: '已恢复',
+    sweetIcon: '📸',
+    sweetText: '删不掉的是\n你每一个不经意的瞬间\n都好看得要命'
   },
   {
-    icon: '💣',
-    label: '后 果 自 负',
+    icon: '🤫',
+    label: '他不想让你\n知道的事',
+    hint: '长按揭秘',
+    sweetIcon: '💎',
+    sweetText: '不想让你知道的是\n我比昨天又更喜欢你了\n这件事没法控制'
+  },
+  {
+    icon: '🔍',
+    label: '深夜浏览记录',
+    hint: '3条结果',
     sweetIcon: '🌈',
-    sweetText: '你是我唯一\n不想开的玩笑'
+    sweetText: '搜索记录：\n"老婆生日送什么好"\n"怎样才算好老公"\n"余生 你"'
   },
   {
-    icon: '😱',
-    label: '最 恐 怖 的',
-    sweetIcon: '🐶',
-    sweetText: '骗你是小狗——\n我想和你走完这一生'
+    icon: '💬',
+    label: '藏了很久的话',
+    hint: '即将过期',
+    sweetIcon: '❤️‍🔥',
+    sweetText: '这句话藏了很久——\n骗你是小狗\n我想和你走完这一生',
+    locked: true
   }
 ];
 
 let flippedCount = 0;
 const grid = document.getElementById('grid');
-const progress = document.getElementById('progress');
+const progressLabel = document.getElementById('progressLabel');
+const progressFill = document.getElementById('progressFill');
+const totalCards = cards.length;
+
+function updateProgress() {
+  progressLabel.textContent = `${flippedCount} / ${totalCards}`;
+  progressFill.style.width = `${(flippedCount / totalCards) * 100}%`;
+}
+
+function createSparkles(el) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const colors = ['#ff7eb3', '#ffd1dc', '#ffb347', '#fff', '#ff4f7b'];
+  for (let i = 0; i < 12; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    const angle = (Math.PI * 2 * i) / 12;
+    const dist = 40 + Math.random() * 50;
+    s.style.cssText = `
+      left: ${cx}px; top: ${cy}px;
+      background: ${colors[i % colors.length]};
+      --tx: ${Math.cos(angle) * dist}px;
+      --ty: ${Math.sin(angle) * dist}px;
+    `;
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 800);
+  }
+}
 
 cards.forEach((data, i) => {
   const container = document.createElement('div');
   container.className = 'card-container';
 
+  const isLocked = data.locked;
   container.innerHTML = `
-    <div class="card" data-index="${i}">
+    <div class="card${isLocked ? ' locked' : ''}" data-index="${i}">
       <div class="card-face card-front">
+        ${isLocked ? '<span class="lock-icon">🔐</span>' : ''}
         <span class="icon">${data.icon}</span>
         <span class="label">${data.label}</span>
+        <span class="hint">${data.hint}</span>
       </div>
       <div class="card-face card-back">
         <span class="sweet-icon">${data.sweetIcon}</span>
@@ -317,44 +549,71 @@ cards.forEach((data, i) => {
     const card = container.querySelector('.card');
     if (card.classList.contains('flipped')) return;
 
-    card.classList.add('flipped');
-    flippedCount++;
-    progress.textContent = `已翻开 ${flippedCount} / 6`;
-
-    // Vibrate on mobile if supported
-    if (navigator.vibrate) navigator.vibrate(30);
-
-    if (flippedCount === cards.length) {
-      setTimeout(() => {
-        showEasterEgg();
-      }, 800);
+    // Locked card: need all others flipped first
+    if (card.classList.contains('locked') && flippedCount < totalCards - 1) {
+      card.classList.add('shake');
+      setTimeout(() => card.classList.remove('shake'), 500);
+      return;
     }
+
+    // Shake briefly then flip
+    card.classList.add('shake');
+    setTimeout(() => {
+      card.classList.remove('shake');
+      card.classList.add('flipped');
+      flippedCount++;
+      updateProgress();
+      createSparkles(container);
+
+      if (navigator.vibrate) navigator.vibrate(40);
+
+      if (flippedCount === totalCards) {
+        setTimeout(showEasterEgg, 1000);
+      }
+    }, 300);
   });
 
   grid.appendChild(container);
 });
 
+// --- Easter Egg ---
 function showEasterEgg() {
-  document.getElementById('easterEgg').classList.add('show');
-  spawnHearts();
+  const egg = document.getElementById('easterEgg');
+  egg.classList.add('show');
+
+  const lines = ['line1', 'line2', 'line3', 'subText'];
+  lines.forEach((id, i) => {
+    setTimeout(() => {
+      document.getElementById(id).classList.add('visible');
+    }, 600 + i * 800);
+  });
+
+  setTimeout(spawnHearts, 400);
 }
 
 function spawnHearts() {
-  const emojis = ['❤️', '💕', '💗', '💖', '💓', '🩷', '✨'];
+  const emojis = ['❤️', '💕', '💗', '💖', '✨', '🩷', '💓'];
   let count = 0;
   const interval = setInterval(() => {
-    if (count > 30) { clearInterval(interval); return; }
+    if (count > 40) { clearInterval(interval); return; }
     const heart = document.createElement('div');
     heart.className = 'heart';
     heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.bottom = '-20px';
-    heart.style.fontSize = (16 + Math.random() * 20) + 'px';
-    heart.style.animationDuration = (3 + Math.random() * 2) + 's';
+    const size = 16 + Math.random() * 22;
+    const duration = 3.5 + Math.random() * 2.5;
+    const rot = (Math.random() - 0.5) * 40;
+    heart.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      bottom: -20px;
+      font-size: ${size}px;
+      --duration: ${duration}s;
+      --rot: ${rot}deg;
+      animation-duration: ${duration}s;
+    `;
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 5000);
+    setTimeout(() => heart.remove(), duration * 1000 + 200);
     count++;
-  }, 150);
+  }, 120);
 }
 </script>
 
